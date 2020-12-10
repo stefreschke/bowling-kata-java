@@ -97,6 +97,7 @@ class BowlingGameTest {
     }
 
     @Test
+    @DisplayName("game finished: cannot continue throwing")
     void lastRoundPlayed_cannotPlayOn() {
         BowlingGame game = new BowlingGame();
         playRounds(game, 10);
@@ -104,6 +105,7 @@ class BowlingGameTest {
     }
 
     @Test
+    @DisplayName("10 rounds played: game is finished")
     void lastRoundPlayed_GameIsMarkedFinished() {
         BowlingGame game = new BowlingGame();
         playRounds(game, 10);
@@ -111,6 +113,7 @@ class BowlingGameTest {
     }
 
     @Test
+    @DisplayName("9 rounds played, game is not finished")
     void nineRoundsPlayed_GameIsNotMarkedFinished() {
         BowlingGame game = new BowlingGame();
         playRounds(game, 9);

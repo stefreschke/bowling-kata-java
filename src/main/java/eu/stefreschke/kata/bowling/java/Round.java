@@ -1,17 +1,27 @@
 package eu.stefreschke.kata.bowling.java;
 
 import lombok.Getter;
+import lombok.NonNull;
 
 import java.util.Optional;
 
 public class Round implements ThrowPinsUseCase {
-    private Round previous;
+    private final Round previous;
     private int availableThrows = 2;
     private int remainingPins = 10;
+    private int bonusCounter = 0;
     @Getter
     private int bonusPoints = 0;
 
     private RoundCategory roundCategory = RoundCategory.NORMAL;
+
+    public Round() {
+        this.previous = null;
+    }
+
+    public Round(@NonNull Round previous) {
+        this.previous = previous;
+    }
 
     @Override
     public int remainingPins() {
@@ -34,15 +44,33 @@ public class Round implements ThrowPinsUseCase {
     private void countThrow(int numberOfPinsThrown) {
         availableThrows = calculateRemainingThrows(numberOfPinsThrown);
         remainingPins -= numberOfPinsThrown;
+        if (previous != null) {
+            previous.notifyAboutThrow(numberOfPinsThrown);
+        }
+    }
+
+    private void notifyAboutThrow(int numberOfPinsThrown) {
+        if (bonusCounter > 0) {
+            bonusPoints += numberOfPinsThrown;
+            if (previous != null) {
+                previous.notifyAboutThrow(numberOfPinsThrown);
+            }
+        }
+        bonusCounter--;
     }
 
     private int calculateRemainingThrows(int numberOfPinsThrown) {
         if (numberOfPinsThrown == remainingPins) {
             markRoundAsStrikeOrSpare(numberOfPinsThrown);
+            setBonusCounterAcordingly();
             return 0;
         } else {
             return availableThrows - 1;
         }
+    }
+
+    private void setBonusCounterAcordingly() {
+        bonusCounter = roundCategory.getNumberOfBonusRounds();
     }
 
     private void markRoundAsStrikeOrSpare(int numberOfPinsThrown) {
