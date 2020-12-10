@@ -1,8 +1,13 @@
 package eu.stefreschke.kata.bowling.java;
 
+import lombok.Getter;
+
 public class Round implements ThrowPinsUseCase {
     private int availableThrows = 2;
     private int remainingPins = 10;
+    @Getter
+    private int bonusPoints = 0;
+
     private RoundCategory roundCategory = RoundCategory.NORMAL;
 
     @Override
@@ -61,6 +66,10 @@ public class Round implements ThrowPinsUseCase {
 
     public RoundCategory category() {
         return roundCategory;
+    }
+
+    public int totalPoints() {
+        return 10 - remainingPins + bonusPoints;
     }
 
     public static class ThrewOnFinishedRoundException extends RuntimeException {

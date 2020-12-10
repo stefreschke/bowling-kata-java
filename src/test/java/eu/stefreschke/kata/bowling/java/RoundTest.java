@@ -7,6 +7,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class RoundTest {
     @Test
@@ -76,5 +77,18 @@ class RoundTest {
         round.newThrow(6);
         round.newThrow(4);
         assertThat(round.category()).isEqualTo(RoundCategory.SPARE);
+    }
+
+    @Test
+    @DisplayName("spared with 6+4: bonus points 0, total points 10")
+    void finishedSingleRound_hasNoBonusPoints() {
+        Round round = new Round();
+        round.newThrow(6);
+        round.newThrow(4);
+        assertAll(
+                () -> assertThat(round.getBonusPoints()).isZero(),
+                () -> assertThat(round.totalPoints()).isEqualTo(10)
+        );
+
     }
 }
