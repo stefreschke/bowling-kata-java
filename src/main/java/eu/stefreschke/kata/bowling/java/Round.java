@@ -2,7 +2,10 @@ package eu.stefreschke.kata.bowling.java;
 
 import lombok.Getter;
 
+import java.util.Optional;
+
 public class Round implements ThrowPinsUseCase {
+    private Round previous;
     private int availableThrows = 2;
     private int remainingPins = 10;
     @Getter
@@ -31,7 +34,6 @@ public class Round implements ThrowPinsUseCase {
     private void countThrow(int numberOfPinsThrown) {
         availableThrows = calculateRemainingThrows(numberOfPinsThrown);
         remainingPins -= numberOfPinsThrown;
-
     }
 
     private int calculateRemainingThrows(int numberOfPinsThrown) {
@@ -70,6 +72,14 @@ public class Round implements ThrowPinsUseCase {
 
     public int totalPoints() {
         return 10 - remainingPins + bonusPoints;
+    }
+
+    public Optional<Round> getPrevious() {
+        if (previous == null) {
+            return Optional.empty();
+        } else {
+            return Optional.of(previous);
+        }
     }
 
     public static class ThrewOnFinishedRoundException extends RuntimeException {

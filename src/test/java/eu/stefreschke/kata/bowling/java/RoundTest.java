@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -89,6 +91,12 @@ class RoundTest {
                 () -> assertThat(round.getBonusPoints()).isZero(),
                 () -> assertThat(round.totalPoints()).isEqualTo(10)
         );
+    }
 
+    @Test
+    void roundKnowsAboutPreviousRound() {
+        Round round = new Round();
+        Optional<Round> previousRound = round.getPrevious();
+        assertThat(previousRound).isEmpty();
     }
 }
