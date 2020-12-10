@@ -6,13 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BowlingGame implements ThrowPinsUseCase {
-    private int currentPoints;
     @Getter
     private int currentRoundNumber;
-    @Getter
     private boolean isFinished;
     @Getter
-    private List<Round> rounds;
+    private final List<Round> rounds;
     @Getter
     private Round currentRound;
 
@@ -21,7 +19,6 @@ public class BowlingGame implements ThrowPinsUseCase {
         this.currentRound = new Round();
         this.rounds.add(currentRound);
         this.currentRoundNumber = 1;
-        this.currentPoints = 0;
     }
 
     @Override
@@ -41,7 +38,6 @@ public class BowlingGame implements ThrowPinsUseCase {
         if (!currentRound.isThrowAvailable()) {
             updateInternalState();
         }
-        currentPoints += numberOfPins;
 
     }
 
