@@ -5,13 +5,15 @@ import lombok.Getter;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
 public class BowlingGame implements ThrowPinsUseCase {
     private int currentPoints;
+    @Getter
     private int currentRoundNumber;
+    @Getter
     private boolean isFinished;
-
+    @Getter
     private List<Round> rounds;
+    @Getter
     private Round currentRound;
 
     public BowlingGame() {
@@ -53,7 +55,7 @@ public class BowlingGame implements ThrowPinsUseCase {
     }
 
     private void moveToNextRound() {
-        currentRound = new Round();
+        currentRound = new Round(currentRound);
         rounds.add(currentRound);
         currentRoundNumber += 1;
     }
@@ -73,5 +75,11 @@ public class BowlingGame implements ThrowPinsUseCase {
 
     public boolean isFinished() {
         return isFinished;
+    }
+
+    public int getCurrentPoints() {
+        return rounds.stream()
+                .map(Round::totalPoints)
+                .reduce(0, Integer::sum);
     }
 }

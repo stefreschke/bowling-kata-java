@@ -120,6 +120,28 @@ class BowlingGameTest {
         assertThat(game.isFinished()).isFalse();
     }
 
+    @Test
+    @DisplayName("example game played: points counted validly")
+    void sampleGamePlay_PointsCountedValidly() {
+        BowlingGame game = new BowlingGame();
+        game.newThrow(9);
+        game.newThrow(1);
+        // SPARE ==> 14 by now
+        game.newThrow(4);
+        game.newThrow(6);
+        // SPARE ==> 27 by now
+        game.newThrow(3);
+        game.newThrow(3);
+        // 33 by now
+        game.newThrow(10);
+        // STRIKE ==> 62 by now
+        game.newThrow(10);
+        // STRIKE ==> 81 by now
+        game.newThrow(9);
+        game.newThrow(0); // unlucky miss
+        assertThat(game.getCurrentPoints()).isEqualTo(90);
+    }
+
     private void playRounds(BowlingGame game, int i) {
         IntStream.range(1, i + 1).forEach(simulatedPlayingOneRound(game));
     }
