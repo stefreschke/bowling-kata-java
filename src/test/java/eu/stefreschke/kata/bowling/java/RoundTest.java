@@ -128,4 +128,18 @@ class RoundTest {
                 () -> assertThat(third.totalPoints()).isEqualTo(3)
         );
     }
+
+    @Test
+    void spareFirstRound_onlyFirstThrowOfRoundTwoDoubled() {
+        Round first = new Round();
+        Round second = new Round(first);
+        first.newThrow(5);
+        first.newThrow(5);
+        second.newThrow(7);
+        second.newThrow(3);
+        assertAll(
+                () -> assertThat(first.totalPoints()).isEqualTo(17),
+                () -> assertThat(second.totalPoints()).isEqualTo(10)
+        );
+    }
 }
