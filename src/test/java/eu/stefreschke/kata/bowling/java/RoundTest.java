@@ -10,6 +10,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class RoundTest {
     @Test
@@ -148,5 +149,29 @@ class RoundTest {
         Round round = new Round();
         round.setAsLastRound();
         assertThat(round.isLastRound()).isTrue();
+    }
+
+    @Test
+    void round_notMarkedAsLastRound() {
+        Round round = new Round();
+        assertThat(round.isLastRound()).isFalse();
+    }
+
+    @Test
+    void lastRound_PointsAreCountedNormally() {
+        Round round = new Round();
+        round.setAsLastRound();
+        round.newThrow(5);
+        round.newThrow(5);
+        assertThat(round.totalPoints()).isEqualTo(10);
+    }
+
+    @Test
+    void lastRound_CanThrowOnAfterSpare() {
+        Round round = new Round();
+        round.setAsLastRound();
+        round.newThrow(5);
+        round.newThrow(5);
+        assertDoesNotThrow(() -> round.newThrow(5));
     }
 }

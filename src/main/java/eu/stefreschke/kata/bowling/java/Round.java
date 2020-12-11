@@ -10,6 +10,7 @@ public class Round implements ThrowPinsUseCase {
     private int availableThrows = 2;
     private int remainingPins = 10;
     private int bonusCounter = 0;
+    private int pointsScored = 0;
     @Getter
     private int bonusPoints = 0;
 
@@ -43,30 +44,60 @@ public class Round implements ThrowPinsUseCase {
     }
 
     private void countThrow(int numberOfPinsThrown) {
+        notifyPreviousRoundIfPresent(numberOfPinsThrown);
         availableThrows = calculateRemainingThrows(numberOfPinsThrown);
-        remainingPins -= numberOfPinsThrown;
+        updateNumberOfRemainingPins(numberOfPinsThrown);
+        pointsScored += numberOfPinsThrown;
+    }
+
+    private void updateNumberOfRemainingPins(int numberOfPinsThrown) {
+        if (isLastRound() && roundCategory != RoundCategory.NORMAL) {
+            resetRemainingPinsAndRoundCategory();
+        } else {
+            remainingPins -= numberOfPinsThrown;
+        }
+    }
+
+    private void resetRemainingPinsAndRoundCategory() {
+        remainingPins = 10;
+        roundCategory = RoundCategory.NORMAL;
+    }
+
+    private void notifyAboutThrow(int pinsThrown) {
+        // method is invoked by other instances of Round
+        // this is hacky, but 'private' allows it, so why not...
+        if (bonusCounter > 0) {
+            bonusPoints += pinsThrown;
+            notifyPreviousRoundIfPresent(pinsThrown);
+        }
+        bonusCounter--;
+    }
+
+    private void notifyPreviousRoundIfPresent(int numberOfPinsThrown) {
         if (previous != null) {
             previous.notifyAboutThrow(numberOfPinsThrown);
         }
     }
 
-    private void notifyAboutThrow(int numberOfPinsThrown) {
-        if (bonusCounter > 0) {
-            bonusPoints += numberOfPinsThrown;
-            if (previous != null) {
-                previous.notifyAboutThrow(numberOfPinsThrown);
-            }
-        }
-        bonusCounter--;
-    }
-
     private int calculateRemainingThrows(int numberOfPinsThrown) {
         if (numberOfPinsThrown == remainingPins) {
             markRoundAsStrikeOrSpare(numberOfPinsThrown);
-            setBonusCounterAcordingly();
-            return 0;
+            if (isLastRound()) {
+                return remainingThrowsForSpecialThrowsInLastRound();
+            } else {
+                setBonusCounterAcordingly();
+                return 0;
+            }
         } else {
             return availableThrows - 1;
+        }
+    }
+
+    private int remainingThrowsForSpecialThrowsInLastRound() {
+        if (roundCategory == RoundCategory.STRIKE) {
+            return 2;
+        } else {
+            return 1;
         }
     }
 
@@ -100,7 +131,7 @@ public class Round implements ThrowPinsUseCase {
     }
 
     public int totalPoints() {
-        return 10 - remainingPins + bonusPoints;
+        return pointsScored + bonusPoints;
     }
 
     public Optional<Round> getPrevious() {
