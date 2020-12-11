@@ -142,4 +142,11 @@ class RoundTest {
                 () -> assertThat(second.totalPoints()).isEqualTo(10)
         );
     }
+
+    @Test
+    void round_canBeSetAsLastRound() {
+        Round round = new Round();
+        round.setAsLastRound();
+        assertThat(round.isLastRound()).isTrue();
+    }
 }

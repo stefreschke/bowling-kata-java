@@ -14,6 +14,7 @@ public class Round implements ThrowPinsUseCase {
     private int bonusPoints = 0;
 
     private RoundCategory roundCategory = RoundCategory.NORMAL;
+    private boolean lastRound = false;
 
     public Round() {
         this.previous = null;
@@ -108,6 +109,15 @@ public class Round implements ThrowPinsUseCase {
         } else {
             return Optional.of(previous);
         }
+    }
+
+    public void setAsLastRound() {
+        this.lastRound = true;
+
+    }
+
+    public boolean isLastRound() {
+        return lastRound;
     }
 
     public static class ThrewOnFinishedRoundException extends RuntimeException {
