@@ -47,7 +47,7 @@ public class Round implements ThrowPinsUseCase {
 
     private void countThrow(int numberOfPinsThrown) {
         notifyPreviousRoundIfPresent(numberOfPinsThrown);
-        availableThrows = calculateRemainingThrows(numberOfPinsThrown);
+        updateRemainingThrows(numberOfPinsThrown);
         updateNumberOfRemainingPins(numberOfPinsThrown);
         pointsScored += numberOfPinsThrown;
     }
@@ -81,17 +81,17 @@ public class Round implements ThrowPinsUseCase {
         }
     }
 
-    private int calculateRemainingThrows(int numberOfPinsThrown) {
+    private void updateRemainingThrows(int numberOfPinsThrown) {
         if (numberOfPinsThrown == remainingPins) {
             markRoundAsStrikeOrSpare(numberOfPinsThrown);
             if (isLastRound()) {
-                return remainingThrowsForSpecialThrowsInLastRound();
+                availableThrows = remainingThrowsForSpecialThrowsInLastRound();
             } else {
                 setBonusCounterAcordingly();
-                return 0;
+                availableThrows = 0;
             }
         } else {
-            return availableThrows - 1;
+            availableThrows -= 1;
         }
     }
 
