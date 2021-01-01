@@ -130,6 +130,7 @@ class RoundTest {
     }
 
     @Test
+    @DisplayName("2 rounds, spare on 1st: first throw on 2nd is doubled, second throw normal")
     void spareFirstRound_onlyFirstThrowOfRoundTwoDoubled() {
         Round first = new Round();
         Round second = new Round(first);
@@ -144,6 +145,7 @@ class RoundTest {
     }
 
     @Test
+    @DisplayName("last round: is marked as last round")
     void round_canBeSetAsLastRound() {
         Round round = new Round();
         round.setAsLastRound();
@@ -151,12 +153,14 @@ class RoundTest {
     }
 
     @Test
+    @DisplayName("new Round: not marked as last round")
     void round_notMarkedAsLastRound() {
         Round round = new Round();
         assertThat(round.isLastRound()).isFalse();
     }
 
     @Test
+    @DisplayName("last round: points are counted normally")
     void lastRound_PointsAreCountedNormally() {
         Round round = new Round();
         round.setAsLastRound();
@@ -166,6 +170,7 @@ class RoundTest {
     }
 
     @Test
+    @DisplayName("last round: spare, can throw on")
     void lastRound_CanThrowOnAfterSpare() {
         Round round = new Round();
         round.setAsLastRound();
@@ -175,6 +180,7 @@ class RoundTest {
     }
 
     @Test
+    @DisplayName("last round: spare + 2 throws, exception thrown")
     void lastRound_cannotThrowOnAfterOneThrowAfterSpareInLastRow() {
         Round round = new Round();
         round.setAsLastRound();
@@ -185,12 +191,24 @@ class RoundTest {
     }
 
     @Test
+    @DisplayName("last round: three strikes possible")
     void lastRound_canThrowThreeStrikesInLastRound() {
         Round round = new Round();
         round.setAsLastRound();
         round.newThrow(10);
         round.newThrow(10);
         round.newThrow(10);
+        assertThat(round.isThrowAvailable()).isFalse();
+    }
+
+    @Test
+    @DisplayName("last round: strike-spare, cannot throw on after")
+    void lastRound_cannotThrowOnAfterStrikeSpare() {
+        Round round = new Round();
+        round.setAsLastRound();
+        round.newThrow(10);
+        round.newThrow(5);
+        round.newThrow(5);
         assertThat(round.isThrowAvailable()).isFalse();
     }
 }

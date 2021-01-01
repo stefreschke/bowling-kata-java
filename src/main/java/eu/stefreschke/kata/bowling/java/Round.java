@@ -12,6 +12,7 @@ public class Round implements ThrowPinsUseCase {
     private int bonusCounter = 0;
     private int pointsScored = 0;
     private int bonusThrowsAvailable = 0;
+    private int bonusThrowsGiven = 0;
 
     @Getter
     private int bonusPoints = 0;
@@ -82,46 +83,41 @@ public class Round implements ThrowPinsUseCase {
     }
 
     private void updateRemainingThrows(int numberOfPinsThrown) {
-        if (numberOfPinsThrown == remainingPins) {
-            markRoundAsStrikeOrSpare(numberOfPinsThrown);
+        boolean roundIsSpecial = numberOfPinsThrown == remainingPins;
+        if (roundIsSpecial) {
+            updateRoundCategory(numberOfPinsThrown);
             if (isLastRound()) {
-                availableThrows = remainingThrowsForSpecialThrowsInLastRound();
+                updateBonusThrows();
+                availableThrows =  bonusThrowsAvailable;
             } else {
-                setBonusCounterAcordingly();
+                updateBonusCounterAccordingly();
                 availableThrows = 0;
             }
         } else {
-            availableThrows -= 1;
+            availableThrows = availableThrows - 1;
         }
     }
 
-    private int remainingThrowsForSpecialThrowsInLastRound() {
-        if (bonusThrowsAvailable == 0) {
-            return givenExtraThrows();
+    private void updateBonusThrows() {
+        if (bonusThrowsGiven == 0) {
+            updateSpecialThrowsGivenBasedOnRoundCategory();
         } else {
-            return --bonusThrowsAvailable;
+            --bonusThrowsAvailable;
         }
-    }
-
-    private int givenExtraThrows() {
-        updateSpecialThrowsGivenBasedOnRoundCategory();
-        return bonusThrowsAvailable;
     }
 
     private void updateSpecialThrowsGivenBasedOnRoundCategory() {
-        bonusThrowsAvailable = roundCategory.getNumberOfBonusRounds();
+        int numberOfBonusThrows = roundCategory.getNumberOfBonusRounds();
+        bonusThrowsAvailable = numberOfBonusThrows;
+        bonusThrowsGiven = numberOfBonusThrows;
     }
 
-    private void setBonusCounterAcordingly() {
+    private void updateBonusCounterAccordingly() {
         bonusCounter = roundCategory.getNumberOfBonusRounds();
     }
 
-    private void markRoundAsStrikeOrSpare(int numberOfPinsThrown) {
-        if (numberOfPinsThrown == 10) {
-            roundCategory = RoundCategory.STRIKE;
-        } else {
-            roundCategory = RoundCategory.SPARE;
-        }
+    private void updateRoundCategory(int numberOfPinsThrown) {
+        roundCategory = RoundCategory.given(this, numberOfPinsThrown);
     }
 
     private void assertNumberOfPinsThrownIsValid(int numberOfPinsThrown) {
