@@ -9,8 +9,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.*;
 
 class RoundTest {
     @Test
@@ -173,5 +172,25 @@ class RoundTest {
         round.newThrow(5);
         round.newThrow(5);
         assertDoesNotThrow(() -> round.newThrow(5));
+    }
+
+    @Test
+    void lastRound_cannotThrowOnAfterOneThrowAfterSpareInLastRow() {
+        Round round = new Round();
+        round.setAsLastRound();
+        round.newThrow(5);
+        round.newThrow(5);
+        round.newThrow(5);
+        assertThrows(Round.ThrewOnFinishedRoundException.class, () -> round.newThrow(5));
+    }
+
+    @Test
+    void lastRound_canThrowThreeStrikesInLastRound() {
+        Round round = new Round();
+        round.setAsLastRound();
+        round.newThrow(10);
+        round.newThrow(10);
+        round.newThrow(10);
+        assertThat(round.isThrowAvailable()).isFalse();
     }
 }

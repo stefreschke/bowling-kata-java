@@ -11,6 +11,8 @@ public class Round implements ThrowPinsUseCase {
     private int remainingPins = 10;
     private int bonusCounter = 0;
     private int pointsScored = 0;
+    private int specialThrowsGiven = 0;
+
     @Getter
     private int bonusPoints = 0;
 
@@ -94,10 +96,15 @@ public class Round implements ThrowPinsUseCase {
     }
 
     private int remainingThrowsForSpecialThrowsInLastRound() {
-        if (roundCategory == RoundCategory.STRIKE) {
-            return 2;
+        if (specialThrowsGiven == 0) {
+            if (roundCategory == RoundCategory.STRIKE) {
+                specialThrowsGiven = 2;
+            } else {
+                specialThrowsGiven = 1;
+            }
+            return specialThrowsGiven;
         } else {
-            return 1;
+            return --specialThrowsGiven;
         }
     }
 
