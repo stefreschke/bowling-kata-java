@@ -9,7 +9,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.*;
 
 class RoundTest {
     @Test
@@ -130,6 +130,7 @@ class RoundTest {
     }
 
     @Test
+    @DisplayName("2 rounds, spare on 1st: first throw on 2nd is doubled, second throw normal")
     void spareFirstRound_onlyFirstThrowOfRoundTwoDoubled() {
         Round first = new Round();
         Round second = new Round(first);
@@ -142,4 +143,72 @@ class RoundTest {
                 () -> assertThat(second.totalPoints()).isEqualTo(10)
         );
     }
+
+    @Test
+    @DisplayName("last round: is marked as last round")
+    void round_canBeSetAsLastRound() {
+        Round round = new Round();
+        round.setAsLastRound();
+        assertThat(round.isLastRound()).isTrue();
+    }
+
+    @Test
+    @DisplayName("new Round: not marked as last round")
+    void round_notMarkedAsLastRound() {
+        Round round = new Round();
+        assertThat(round.isLastRound()).isFalse();
+    }
+
+    @Test
+    @DisplayName("last round: points are counted normally")
+    void lastRound_PointsAreCountedNormally() {
+        Round round = new Round();
+        round.setAsLastRound();
+        round.newThrow(5);
+        round.newThrow(5);
+        assertThat(round.totalPoints()).isEqualTo(10);
+    }
+
+    @Test
+    @DisplayName("last round: spare, can throw on")
+    void lastRound_CanThrowOnAfterSpare() {
+        Round round = new Round();
+        round.setAsLastRound();
+        round.newThrow(5);
+        round.newThrow(5);
+        assertDoesNotThrow(() -> round.newThrow(5));
+    }
+
+    @Test
+    @DisplayName("last round: spare + 2 throws, exception thrown")
+    void lastRound_cannotThrowOnAfterOneThrowAfterSpareInLastRow() {
+        Round round = new Round();
+        round.setAsLastRound();
+        round.newThrow(5);
+        round.newThrow(5);
+        round.newThrow(5);
+        assertThrows(Round.ThrewOnFinishedRoundException.class, () -> round.newThrow(5));
+    }
+
+    @Test
+    @DisplayName("last round: three strikes possible")
+    void lastRound_canThrowThreeStrikesInLastRound() {
+        Round round = new Round();
+        round.setAsLastRound();
+        round.newThrow(10);
+        round.newThrow(10);
+        round.newThrow(10);
+        assertThat(round.isThrowAvailable()).isFalse();
+    }
+
+//    @Test
+//    @DisplayName("last round: strike-spare, cannot throw on after")
+//    void lastRound_cannotThrowOnAfterStrikeSpare() {
+//        Round round = new Round();
+//        round.setAsLastRound();
+//        round.newThrow(10);
+//        round.newThrow(5);
+//        round.newThrow(5);
+//        assertThat(round.isThrowAvailable()).isFalse();
+//    }
 }

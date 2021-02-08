@@ -152,4 +152,15 @@ class BowlingGameTest {
             game.newThrow(3);
         };
     }
+
+//    @Test
+//    void tenthRoundHasThreeTHrows() {
+//        BowlingGame game = new BowlingGame();
+//        IntStream.rangeClosed(1, 9).forEach(i -> {
+//            game.newThrow(10); // throw 9 strikes
+//        });
+//        game.newThrow(10);
+//        game.newThrow(10);
+//        game.newThrow(10);
+//    }
 }

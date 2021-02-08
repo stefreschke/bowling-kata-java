@@ -11,4 +11,18 @@ public enum RoundCategory {
     RoundCategory(int bonusRounds) {
         this.numberOfBonusRounds = bonusRounds;
     }
+
+    public static RoundCategory given(Round round, int pinsThrown) {
+        int remainingPins = round.remainingPins();
+        boolean roundIsSpecial = remainingPins == pinsThrown;
+        if (roundIsSpecial) {
+            if (pinsThrown == 10) {
+                return STRIKE;
+            } else {
+                return SPARE;
+            }
+        } else {
+            return NORMAL;
+        }
+    }
 }
