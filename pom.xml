@@ -15,6 +15,9 @@
         <pitest-maven.version>1.6.2</pitest-maven.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <pitest-junit5-plugin.version>0.12</pitest-junit5-plugin.version>
+        <!-- pitest -->
+        <pitest-maven.threads>20</pitest-maven.threads>
+        <pitest-maven.mutator>ALL</pitest-maven.mutator>
     </properties>
     <dependencies>
         <dependency>
@@ -82,6 +85,12 @@
                     <groupId>org.pitest</groupId>
                     <artifactId>pitest-maven</artifactId>
                     <version>${pitest-maven.version}</version>
+                    <configuration>
+                        <threads>${pitest-maven.threads}</threads>
+                        <mutators>
+                            <mutator>${pitest-maven.mutator}</mutator>
+                        </mutators>
+                    </configuration>
                     <dependencies>
                         <dependency>
                             <groupId>org.pitest</groupId>
